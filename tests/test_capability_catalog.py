@@ -134,7 +134,7 @@ async def test_config_apply_emits_the_implemented_behavior_event() -> None:
 
 
 @pytest.mark.anyio
-@pytest.mark.parametrize("command", ["set_power", "identify", "send_arbitrary_command"])
+@pytest.mark.parametrize("command", ["identify", "send_arbitrary_command", "factory_reset"])
 async def test_unimplemented_and_unsafe_commands_fail_closed(command: str) -> None:
     transport = httpx.ASGITransport(app=app)
     async with httpx.AsyncClient(transport=transport, base_url="http://testserver") as client:

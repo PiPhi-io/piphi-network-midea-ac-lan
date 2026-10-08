@@ -3,7 +3,7 @@
   "manifest_version": "1.0",
   "id": "piphi-network-midea-ac-lan",
   "name": "Midea AC LAN",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "Monitor and control supported Midea air conditioners over the local network.",
   "metadata": {
     "generator": "piphi-network-create",
@@ -17,7 +17,7 @@
     "website": "https://piphi.io"
   },
   "license": "Apache-2.0",
-  "image": "docker.io/piphinetwork/piphi-network-midea-ac-lan:0.1.0",
+  "image": "docker.io/piphinetwork/piphi-network-midea-ac-lan:0.3.0",
   "platforms": [
     "linux"
   ],
@@ -25,7 +25,7 @@
     "linux": {
       "type": "container",
       "container": {
-        "image": "docker.io/piphinetwork/piphi-network-midea-ac-lan:0.1.0",
+        "image": "docker.io/piphinetwork/piphi-network-midea-ac-lan:0.3.0",
         "ports": [
           {
             "container": 4208,
@@ -74,8 +74,12 @@
     "editable_fields": [
       "host",
       "alias",
+      "port",
+      "midea_device_id",
+      "token",
+      "key",
       "poll_interval_seconds",
-      "safety_mode"
+      "controls_enabled"
     ],
     "runtime_fields": [
       "id",
@@ -99,12 +103,106 @@
     },
     "refresh": {
       "kind": "action"
-    }
+    },
+    "power": {"kind": "actuator", "unit": "bool"},
+    "hvac_mode": {"kind": "actuator", "value_kind": "enum"},
+    "hvac_action": {"kind": "sensor", "value_kind": "enum"},
+    "target_temperature_c": {"kind": "actuator", "value_kind": "numeric", "unit": "°C"},
+    "indoor_temperature_c": {"kind": "sensor", "unit": "°C"},
+    "outdoor_temperature_c": {"kind": "sensor", "unit": "°C"},
+    "fan_speed_percent": {"kind": "sensor", "unit": "%"},
+    "fan_mode": {"kind": "actuator", "value_kind": "enum"},
+    "fan_modes_supported": {"kind": "sensor", "value_kind": "text"},
+    "swing_mode": {"kind": "actuator", "value_kind": "enum"},
+    "swing_modes_supported": {"kind": "sensor", "value_kind": "text"},
+    "preset_mode": {"kind": "actuator", "value_kind": "enum"},
+    "preset_modes_supported": {"kind": "sensor", "value_kind": "text"},
+    "set_power": {"kind": "action"},
+    "set_hvac_mode": {"kind": "action"},
+    "set_target_temperature": {"kind": "action"},
+    "set_fan_mode": {"kind": "action"},
+    "set_swing_mode": {"kind": "action"},
+    "set_preset_mode": {"kind": "action"}
   },
   "commands": {
     "refresh": {
       "description": "Refresh the device state.",
       "timeout_ms": 5000
+    },
+    "set_power": {
+      "description": "Turn the configured air conditioner on or off.",
+      "args_schema": {
+        "power": {"type": "boolean", "label": "Power", "semantic": "climate.power", "required": true}
+      },
+      "timeout_ms": 10000
+    },
+    "set_hvac_mode": {
+      "description": "Set a supported HVAC operating mode.",
+      "args_schema": {
+        "mode": {
+          "type": "string",
+          "label": "HVAC mode",
+          "semantic": "climate.hvac_mode",
+          "required": true,
+          "options": ["auto", "cool", "heat", "dry", "fan_only"]
+        }
+      },
+      "timeout_ms": 10000
+    },
+    "set_target_temperature": {
+      "description": "Set the target temperature within the device-reported range.",
+      "args_schema": {
+        "temperature": {
+          "type": "number",
+          "label": "Target temperature",
+          "semantic": "climate.target_temperature",
+          "required": true,
+          "minimum": 16,
+          "maximum": 30,
+          "step": 0.5,
+          "unit": "°C"
+        }
+      },
+      "timeout_ms": 10000
+    },
+    "set_fan_mode": {
+      "description": "Set a fan speed reported as supported by the device.",
+      "args_schema": {
+        "fan_mode": {
+          "type": "string",
+          "label": "Fan mode",
+          "semantic": "climate.fan_mode",
+          "required": true,
+          "options": ["auto", "silent", "low", "medium", "high", "max"]
+        }
+      },
+      "timeout_ms": 10000
+    },
+    "set_swing_mode": {
+      "description": "Set a louver swing mode reported as supported by the device.",
+      "args_schema": {
+        "swing_mode": {
+          "type": "string",
+          "label": "Swing mode",
+          "semantic": "climate.swing_mode",
+          "required": true,
+          "options": ["off", "vertical", "horizontal", "both"]
+        }
+      },
+      "timeout_ms": 10000
+    },
+    "set_preset_mode": {
+      "description": "Activate a supported comfort preset or clear the active preset.",
+      "args_schema": {
+        "preset_mode": {
+          "type": "string",
+          "label": "Preset",
+          "semantic": "climate.preset_mode",
+          "required": true,
+          "options": ["none", "sleep", "eco", "boost", "away"]
+        }
+      },
+      "timeout_ms": 10000
     }
   },
   "entities": [
@@ -115,6 +213,25 @@
       "entity_type": "climate",
       "capabilities": [
         "connected",
+        "power",
+        "hvac_mode",
+        "hvac_action",
+        "target_temperature_c",
+        "indoor_temperature_c",
+        "outdoor_temperature_c",
+        "fan_speed_percent",
+        "fan_mode",
+        "fan_modes_supported",
+        "swing_mode",
+        "swing_modes_supported",
+        "preset_mode",
+        "preset_modes_supported",
+        "set_power",
+        "set_hvac_mode",
+        "set_target_temperature",
+        "set_fan_mode",
+        "set_swing_mode",
+        "set_preset_mode",
         "refresh"
       ],
       "available_commands": [
@@ -122,7 +239,13 @@
           "id": "refresh",
           "label": "Refresh",
           "kind": "action"
-        }
+        },
+        {"id": "set_power", "label": "Set power", "kind": "action"},
+        {"id": "set_hvac_mode", "label": "Set HVAC mode", "kind": "action"},
+        {"id": "set_target_temperature", "label": "Set target temperature", "kind": "action"},
+        {"id": "set_fan_mode", "label": "Set fan mode", "kind": "action"},
+        {"id": "set_swing_mode", "label": "Set swing mode", "kind": "action"},
+        {"id": "set_preset_mode", "label": "Set preset mode", "kind": "action"}
       ],
       "dashboard": {
         "allowed_widgets": [
@@ -134,6 +257,15 @@
       }
     }
   ],
+  "ui": {
+    "experience_packages": [
+      {
+        "registry_id": "io.piphi.midea-ac-lan-status",
+        "version_range": ">=0.2,<1",
+        "auto_install": true
+      }
+    ]
+  },
   "marketplace": {
     "metadata_version": 2,
     "display_name": "Midea AC LAN",

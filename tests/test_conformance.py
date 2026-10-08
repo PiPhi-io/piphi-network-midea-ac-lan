@@ -8,9 +8,28 @@ import httpx
 import pytest
 
 from piphi_network_midea_ac_lan.main import app
+from piphi_network_midea_ac_lan import state
 
 
 FIXTURES = json.loads((Path(__file__).parent / "fixtures" / "contract-conformance.json").read_text())
+
+
+@pytest.fixture(autouse=True)
+def fake_midea_client(monkeypatch):
+    class Client:
+        async def refresh(self):
+            return {
+                "connected": True,
+                "power": True,
+                "hvac_mode": "cool",
+                "target_temperature_c": 22.0,
+                "indoor_temperature_c": 24.0,
+            }
+
+    async def connect(**kwargs):
+        return Client()
+
+    monkeypatch.setattr(state, "_client_connector", connect)
 
 
 @pytest.mark.anyio

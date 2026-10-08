@@ -22,8 +22,8 @@ async def telemetry_example(request: Request):
         config_id=str(entry["config_id"]),
         device_id=str(entry["device_id"]),
         container_id=entry.get("container_id"),
-        metrics={"connected": True},
-        units={},
+        metrics={"connected": True, "power": True, "hvac_mode": "cool", "hvac_action": "cooling", "target_temperature_c": 22.0, "indoor_temperature_c": 24.0, "fan_mode": "auto", "swing_mode": "off", "preset_mode": "none"},
+        units={"target_temperature_c": "°C", "indoor_temperature_c": "°C"},
     )
     return {"status": "queued"}
 
@@ -39,7 +39,7 @@ async def telemetry_for_device(config_id: str, request: Request):
         config_id=str(entry["config_id"]),
         device_id=str(entry["device_id"]),
         container_id=entry.get("container_id"),
-        metrics={"connected": True},
-        units={},
+        metrics={"connected": True, "power": True, "hvac_mode": "cool", "hvac_action": "cooling", "target_temperature_c": 22.0, "indoor_temperature_c": 24.0, "fan_mode": "auto", "swing_mode": "off", "preset_mode": "none"},
+        units={"target_temperature_c": "°C", "indoor_temperature_c": "°C"},
     )
     return {"status": "queued"}
