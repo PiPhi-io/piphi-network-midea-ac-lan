@@ -125,6 +125,25 @@
       "entityType": "climate",
       "capabilities": [
         "connected",
+        "power",
+        "hvac_mode",
+        "hvac_action",
+        "target_temperature_c",
+        "indoor_temperature_c",
+        "outdoor_temperature_c",
+        "fan_speed_percent",
+        "fan_mode",
+        "fan_modes_supported",
+        "swing_mode",
+        "swing_modes_supported",
+        "preset_mode",
+        "preset_modes_supported",
+        "set_power",
+        "set_hvac_mode",
+        "set_target_temperature",
+        "set_fan_mode",
+        "set_swing_mode",
+        "set_preset_mode",
         "refresh"
       ],
       "targeting": {
@@ -284,6 +303,196 @@
           "ui": {
             "group": "do_this"
           }
+        },
+        {
+          "id": "set_power",
+          "label": "Set power",
+          "description": "Turn one selected Midea air conditioner on or off.",
+          "capability": "action.set_power",
+          "capabilityRequirements": [
+            "action.set_power"
+          ],
+          "runtime": {
+            "command": "set_power",
+            "endpoint": "/command",
+            "method": "POST",
+            "timeoutSeconds": 10
+          },
+          "safety": {
+            "riskLevel": "medium",
+            "requiresConfirmation": true,
+            "liveRunAllowed": true
+          },
+          "targeting": {
+            "fanoutSafe": false,
+            "supportsMultiTarget": false,
+            "scopes": [
+              "config",
+              "selection"
+            ]
+          },
+          "failure": {
+            "strategy": "stop",
+            "timeoutSeconds": 10,
+            "continueOnPartialFailure": false,
+            "idempotent": true
+          },
+          "ui": {
+            "group": "do_this"
+          },
+          "params": [
+            {
+              "name": "power",
+              "label": "Power",
+              "type": "boolean",
+              "required": true
+            }
+          ]
+        },
+        {
+          "id": "set_hvac_mode",
+          "label": "Set HVAC mode",
+          "description": "Set the operating mode on one selected Midea air conditioner.",
+          "capability": "action.set_hvac_mode",
+          "capabilityRequirements": [
+            "action.set_hvac_mode"
+          ],
+          "runtime": {
+            "command": "set_hvac_mode",
+            "endpoint": "/command",
+            "method": "POST",
+            "timeoutSeconds": 10
+          },
+          "safety": {
+            "riskLevel": "medium",
+            "requiresConfirmation": true,
+            "liveRunAllowed": true
+          },
+          "targeting": {
+            "fanoutSafe": false,
+            "supportsMultiTarget": false,
+            "scopes": [
+              "config",
+              "selection"
+            ]
+          },
+          "failure": {
+            "strategy": "stop",
+            "timeoutSeconds": 10,
+            "continueOnPartialFailure": false,
+            "idempotent": true
+          },
+          "ui": {
+            "group": "do_this"
+          },
+          "params": [
+            {
+              "name": "mode",
+              "label": "Mode",
+              "type": "select",
+              "required": true,
+              "options": [
+                "auto",
+                "cool",
+                "heat",
+                "dry",
+                "fan_only"
+              ]
+            }
+          ]
+        },
+        {
+          "id": "set_target_temperature",
+          "label": "Set target temperature",
+          "description": "Set the target temperature on one selected Midea air conditioner.",
+          "capability": "action.set_target_temperature",
+          "capabilityRequirements": [
+            "action.set_target_temperature"
+          ],
+          "runtime": {
+            "command": "set_target_temperature",
+            "endpoint": "/command",
+            "method": "POST",
+            "timeoutSeconds": 10
+          },
+          "safety": {
+            "riskLevel": "medium",
+            "requiresConfirmation": true,
+            "liveRunAllowed": true
+          },
+          "targeting": {
+            "fanoutSafe": false,
+            "supportsMultiTarget": false,
+            "scopes": [
+              "config",
+              "selection"
+            ]
+          },
+          "failure": {
+            "strategy": "stop",
+            "timeoutSeconds": 10,
+            "continueOnPartialFailure": false,
+            "idempotent": true
+          },
+          "ui": {
+            "group": "do_this"
+          },
+          "params": [
+            {
+              "name": "temperature",
+              "label": "Temperature",
+              "type": "number",
+              "required": true,
+              "minimum": 16,
+              "maximum": 30,
+              "step": 0.5
+            }
+          ]
+        },
+        {
+          "id": "set_fan_mode",
+          "label": "Set fan mode",
+          "description": "Set a supported fan mode on one selected Midea air conditioner.",
+          "capability": "action.set_fan_mode",
+          "capabilityRequirements": ["action.set_fan_mode"],
+          "runtime": {"command": "set_fan_mode", "endpoint": "/command", "method": "POST", "timeoutSeconds": 10},
+          "safety": {"riskLevel": "medium", "requiresConfirmation": true, "liveRunAllowed": true},
+          "targeting": {"fanoutSafe": false, "supportsMultiTarget": false, "scopes": ["config", "selection"]},
+          "failure": {"strategy": "stop", "timeoutSeconds": 10, "continueOnPartialFailure": false, "idempotent": true},
+          "ui": {"group": "do_this"},
+          "params": [
+            {"name": "fan_mode", "label": "Fan mode", "type": "select", "required": true, "options": ["auto", "silent", "low", "medium", "high", "max"]}
+          ]
+        },
+        {
+          "id": "set_swing_mode",
+          "label": "Set swing mode",
+          "description": "Set a supported swing mode on one selected Midea air conditioner.",
+          "capability": "action.set_swing_mode",
+          "capabilityRequirements": ["action.set_swing_mode"],
+          "runtime": {"command": "set_swing_mode", "endpoint": "/command", "method": "POST", "timeoutSeconds": 10},
+          "safety": {"riskLevel": "medium", "requiresConfirmation": true, "liveRunAllowed": true},
+          "targeting": {"fanoutSafe": false, "supportsMultiTarget": false, "scopes": ["config", "selection"]},
+          "failure": {"strategy": "stop", "timeoutSeconds": 10, "continueOnPartialFailure": false, "idempotent": true},
+          "ui": {"group": "do_this"},
+          "params": [
+            {"name": "swing_mode", "label": "Swing mode", "type": "select", "required": true, "options": ["off", "vertical", "horizontal", "both"]}
+          ]
+        },
+        {
+          "id": "set_preset_mode",
+          "label": "Set preset mode",
+          "description": "Activate a supported comfort preset on one selected Midea air conditioner.",
+          "capability": "action.set_preset_mode",
+          "capabilityRequirements": ["action.set_preset_mode"],
+          "runtime": {"command": "set_preset_mode", "endpoint": "/command", "method": "POST", "timeoutSeconds": 10},
+          "safety": {"riskLevel": "medium", "requiresConfirmation": true, "liveRunAllowed": true},
+          "targeting": {"fanoutSafe": false, "supportsMultiTarget": false, "scopes": ["config", "selection"]},
+          "failure": {"strategy": "stop", "timeoutSeconds": 10, "continueOnPartialFailure": false, "idempotent": true},
+          "ui": {"group": "do_this"},
+          "params": [
+            {"name": "preset_mode", "label": "Preset", "type": "select", "required": true, "options": ["none", "sleep", "eco", "boost", "away"]}
+          ]
         }
       ],
       "stop": [

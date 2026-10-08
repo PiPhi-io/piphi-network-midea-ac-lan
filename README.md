@@ -37,10 +37,13 @@ events, conditions, actions, and protocol variants. Every entry is classified
 as implemented, planned, or excluded. Contract tests enforce that only
 implemented entries are advertised.
 
-Device features remain planned until LAN discovery, protocol normalization,
-per-model capability negotiation, safe command dispatch, and representative
-fixtures exist. Tokens, keys, arbitrary attributes, and raw protocol commands
-are never exposed through the runtime contract.
+The common 0xAC climate profile now includes local power, HVAC mode, target
+temperature, device-reported fan and swing modes, and comfort presets. Fan and
+swing commands fail closed when the appliance does not advertise the selected
+option. The dashboard's HVAC action is an estimate derived from power, mode,
+room temperature, target temperature, and a 0.5 °C deadband; it is not direct
+compressor telemetry. Tokens, keys, arbitrary attributes, and raw protocol
+commands are never exposed through the runtime contract.
 
 ## Manifest
 
@@ -55,6 +58,6 @@ are never exposed through the runtime contract.
 ## Docker
 
 ```bash
-docker build -t docker.io/piphinetwork/piphi-network-midea-ac-lan:0.1.0 .
-docker run --rm -p 4208:4208 docker.io/piphinetwork/piphi-network-midea-ac-lan:0.1.0
+docker build -t docker.io/piphinetwork/piphi-network-midea-ac-lan:0.3.0 .
+docker run --rm -p 4208:4208 docker.io/piphinetwork/piphi-network-midea-ac-lan:0.3.0
 ```

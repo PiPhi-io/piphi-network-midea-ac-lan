@@ -16,11 +16,22 @@
       "status": "implemented",
       "scope": ["all-configurations"],
       "source_refs": ["core_vocabulary"],
-      "reason": "The scaffold implements configuration presence, connectivity state, refresh dispatch, and its configuration event.",
+      "reason": "The runtime implements configuration presence, connectivity state, refresh dispatch, and its configuration event.",
       "state": ["connected"],
       "events": ["runtime.config.applied"],
       "conditions": ["state_matches"],
       "actions": ["refresh"]
+    },
+    {
+      "id": "air-conditioner-core-climate",
+      "status": "implemented",
+      "scope": ["device-type-0xac", "attributes-reported-by-model"],
+      "source_refs": ["midea_local"],
+      "reason": "The msmart-ng adapter normalizes safe common AC controls, negotiates model-reported fan and swing support, exposes supported presets, and derives demand action with read-after-write confirmation.",
+      "state": ["power", "hvac_mode", "hvac_action", "target_temperature_c", "indoor_temperature_c", "outdoor_temperature_c", "fan_speed_percent", "fan_mode", "fan_modes_supported", "swing_mode", "swing_modes_supported", "preset_mode", "preset_modes_supported"],
+      "events": [],
+      "conditions": [],
+      "actions": ["set_power", "set_hvac_mode", "set_target_temperature", "set_fan_mode", "set_swing_mode", "set_preset_mode"]
     },
     {
       "id": "air-conditioner-climate",
@@ -28,10 +39,10 @@
       "scope": ["device-type-0xac", "attributes-reported-by-model"],
       "source_refs": ["midea_ac_lan", "midea_entity_matrix", "midea_local", "home_assistant_midea"],
       "reason": "Core climate controls require local protocol discovery and precise per-model mode, range, fan, and swing negotiation.",
-      "state": ["power", "hvac_mode", "hvac_action", "target_temperature_c", "indoor_temperature_c", "outdoor_temperature_c", "indoor_humidity_percent", "fan_mode", "fan_speed_percent", "swing_horizontal", "swing_vertical", "horizontal_angle", "vertical_angle", "temperature_min_c", "temperature_max_c", "temperature_step_c"],
+      "state": ["indoor_humidity_percent", "swing_horizontal", "swing_vertical", "horizontal_angle", "vertical_angle", "temperature_min_c", "temperature_max_c", "temperature_step_c"],
       "events": ["climate.power_changed", "climate.mode_changed", "climate.target_changed", "climate.action_changed", "climate.threshold_crossed"],
       "conditions": ["power_is", "hvac_mode_is", "hvac_action_is", "indoor_temperature_threshold", "outdoor_temperature_threshold", "humidity_threshold"],
-      "actions": ["set_power", "set_hvac_mode", "set_target_temperature", "set_fan_mode", "set_fan_speed", "set_swing_horizontal", "set_swing_vertical", "set_horizontal_angle", "set_vertical_angle"]
+      "actions": ["set_fan_speed", "set_swing_horizontal", "set_swing_vertical", "set_horizontal_angle", "set_vertical_angle"]
     },
     {
       "id": "air-conditioner-features",
